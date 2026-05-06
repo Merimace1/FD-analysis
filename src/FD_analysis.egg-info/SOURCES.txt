@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+src/FD_analysis/__init__.py
+src/FD_analysis/basic_methods.py
+src/FD_analysis.egg-info/PKG-INFO
+src/FD_analysis.egg-info/SOURCES.txt
+src/FD_analysis.egg-info/dependency_links.txt
+src/FD_analysis.egg-info/top_level.txt
