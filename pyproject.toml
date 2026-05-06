@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "FD-analysis"
+version = "0.1.0"
+description = "A small Python library with my own source code"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Merlin" }
+]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "pandas"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+    "mypy",
+    "build"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.mypy]
+python_version = "3.10"
+strict = true

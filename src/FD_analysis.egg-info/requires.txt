@@ -1,0 +1,9 @@
+numpy
+matplotlib
+pandas
+
+[dev]
+pytest
+ruff
+mypy
+build
