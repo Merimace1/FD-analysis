@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy
 
-def twoD_derivative(x,y,matrix, axis =0) -> tuple:
+def twoD_derivative(x,y,matrix, axis =0,method = "Finite_diff",n=1) -> tuple:
     """
     Calculate the 2D derivative of a matrix along a specified axis.
 
@@ -13,17 +13,54 @@ def twoD_derivative(x,y,matrix, axis =0) -> tuple:
 
     Returns:
     numpy.ndarray: A 2D array containing the derivative values.
-    """
-    if axis == 0:
-        # Calculate vertical derivative
-        y = y[1:]/2 + y[:-1]/2 
-        return (x,y,np.diff(matrix, axis=0))
-    elif axis == 1:
-        # Calculate horizontal derivative
-        x = x[1:]/2 + x[:-1]/2
-        return (x,y,np.diff(matrix, axis=1))
-    else:
-        raise ValueError("Axis must be either 0 (vertical) or 1 (horizontal).")
+    """ 
+
+    matrix = np.asarray(matrix)
+
+    
+    if method == "Finite_diff":
+        if axis == 0:
+            # Calculate vertical derivative
+            y = y[1:]/2 + y[:-1]/2 
+            return (x,y,np.diff(matrix, axis=0))
+        elif axis == 1:
+            # Calculate horizontal derivative
+            x = x[1:]/2 + x[:-1]/2
+            return (x,y,np.diff(matrix, axis=1))
+        else:
+            raise ValueError("Axis must be either 0 (vertical) or 1 (horizontal).")
+
+    elif method == "linear_interp":
+        if axis == 0:
+            N,M = np.shape(matrix)
+            result = np.zeros((N-2*n,M))
+
+            for row_index in range(n,N-n):
+                for column_index in range(M):
+
+                    slope, offset = np.polyfit(y[row_index - n: row_index + n + 1],matrix[row_index - n: row_index + n + 1,column_index], 1)
+
+                    result[row_index - n,column_index] = slope
+
+            y = y[n:N-n]
+
+            return (x,y,result)
+                
+        elif axis == 1:
+            N,M = np.shape(matrix)
+            result = np.zeros((N,M-2*n))
+
+            for row_index in range(N):
+                for column_index in range(n,M-n):
+
+                    slope, offset = np.polyfit(x[column_index - n:column_index + n + 1],matrix[row_index,column_index - n:column_index + n + 1], 1)
+
+                    result[row_index,column_index-n] = slope
+
+            x = x[n:M-n]
+
+            return (x,y,result)
+
 
 
 def Frequency_filtering(vertical_sampling,horizontal_sampling,A,percetile, discard = "low", fill_value = 0) -> np.array:
@@ -47,7 +84,7 @@ def Frequency_filtering(vertical_sampling,horizontal_sampling,A,percetile, disca
         ver_filt = np.abs(vertical_freq) <= threshold_vert
         hor_filt = np.abs(horizontal_freq) <= threshold_hor
 
-    frequency_filter = np.logical_and.outer(hor_filt,ver_filt)
+    frequency_filter = np.logical_and.outer(ver_filt,hor_filt)
 
     A_filtered_fft = np.where(frequency_filter, A_fft, fill_value)
     A_filtered = scipy.fft.ifft2(A_filtered_fft)

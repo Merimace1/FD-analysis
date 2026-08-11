@@ -6,6 +6,7 @@ import scipy
 
 if __name__ == "__main__":
 
+
     low = 0
     high = 20
     N = 100
